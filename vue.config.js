@@ -36,7 +36,17 @@ module.exports = {
       warnings: false,
       errors: true
     },
-    before: require('./mock/mock-server.js')
+    //配置代理跨域
+    proxy: {
+      '/acl': {
+        target: 'http://39.98.123.211:8170',   //api文件夹中的请求如果请求路径开头是acl则由代理服务器帮忙转发到这个地址
+        pathRewrite: { '^/acl': '' },
+      },
+      '/product': {
+        target: 'http://39.98.123.211:8510',   //api文件夹中的请求如果请求路径开头是product则由代理服务器帮忙转发到这个地址
+        pathRewrite: { '^/product': '' }
+      }
+    },
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
@@ -87,7 +97,7 @@ module.exports = {
             .plugin('ScriptExtHtmlWebpackPlugin')
             .after('html')
             .use('script-ext-html-webpack-plugin', [{
-            // `runtime` must same as runtimeChunk name. default is `runtime`
+              // `runtime` must same as runtimeChunk name. default is `runtime`
               inline: /runtime\..*\.js$/
             }])
             .end()
