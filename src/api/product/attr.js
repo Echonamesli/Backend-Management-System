@@ -8,4 +8,4 @@ export const reqCategory3List = (category2Id) => request({url: `/product/getCate
 //获取平台属性
 export const reqAttrList = (category1Id,category2Id, category3Id ) => request({url: `/product/attrInfoList/${category1Id}/${category2Id}/${category3Id}`, method: 'get'})
 //添加属性与属性值
-export const reqAddAttr = () => request({url: '/product/saveAttrInfo', method: 'post'})
+export const reqAddOrUpdateAttr = (data) => request({url: '/product/saveAttrInfo', method: 'post', data})

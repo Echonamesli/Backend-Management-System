@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-card style="margin: 20px 0px">
-      <CategorySelect @getCategoryId="getCategoryId"></CategorySelect>
+      <CategorySelect @getCategoryId="getCategoryId" :show="!isShowTable"></CategorySelect>
     </el-card>
     <el-card style="margin: 20px 0px">
       <div v-show="isShowTable">
@@ -11,22 +11,11 @@
           style="margin: 0px 0px 10px"
           :disabled="!category3Id"
           @click="addAttr"
-          >添加属性</el-button
-        >
+        >添加属性</el-button>
         <!-- 表格：展示平台属性 -->
         <el-table :data="attrList" style="width: 100%" border>
-          <el-table-column
-            type="index"
-            label="序号"
-            width="80"
-            align="center"
-          ></el-table-column>
-          <el-table-column
-            prop="attrName"
-            label="属性名称"
-            width="150"
-            align="center"
-          ></el-table-column>
+          <el-table-column type="index" label="序号" width="80" align="center"></el-table-column>
+          <el-table-column prop="attrName" label="属性名称" width="150" align="center"></el-table-column>
           <el-table-column prop="address" label="属性值列表" align="center">
             <template slot-scope="{ row, $index }">
               <el-tag
@@ -34,28 +23,13 @@
                 v-for="item in row.attrValueList"
                 :key="item.id"
                 style="margin: 0px 10px"
-                >{{ item.valueName }}</el-tag
-              >
+              >{{ item.valueName }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="address"
-            label="操作"
-            width="150"
-            align="center"
-          >
+          <el-table-column prop="address" label="操作" width="150" align="center">
             <template slot-scope="{ row, $index }">
-              <el-button
-                type="warning"
-                icon="el-icon-edit"
-                size="mini"
-                @click="updateAttr(row)"
-              ></el-button>
-              <el-button
-                type="danger"
-                icon="el-icon-delete"
-                size="mini"
-              ></el-button>
+              <el-button type="warning" icon="el-icon-edit" size="mini" @click="updateAttr(row)"></el-button>
+              <el-button type="danger" icon="el-icon-delete" size="mini"></el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -63,11 +37,7 @@
       <div v-show="!isShowTable">
         <el-form :inline="true" ref="form">
           <el-form-item label="属性名" :model="attrInfo">
-            <el-input
-              v-model="attrInfo.attrName"
-              placeholder="请输入属性名"
-              label-width="80px"
-            ></el-input>
+            <el-input v-model="attrInfo.attrName" placeholder="请输入属性名" label-width="80px"></el-input>
           </el-form-item>
         </el-form>
         <el-button
@@ -75,20 +45,10 @@
           type="primary"
           :disabled="!attrInfo.attrName.trim().length"
           @click="addAttrValue"
-          >添加属性值</el-button
-        >
+        >添加属性值</el-button>
         <el-button>取消</el-button>
-        <el-table
-          :data="attrInfo.attrValueList"
-          style="width: 100%; margin: 20px 0px"
-          border
-        >
-          <el-table-column
-            type="index"
-            label="序号"
-            width="80"
-            align="center"
-          ></el-table-column>
+        <el-table :data="attrInfo.attrValueList" style="width: 100%; margin: 20px 0px" border>
+          <el-table-column type="index" label="序号" width="80" align="center"></el-table-column>
           <el-table-column prop="attrName" label="属性值名称" align="center">
             <template slot-scope="{ row, $index }">
               <el-input
@@ -100,34 +60,19 @@
                 @keyup.native.enter="toLook(row)"
                 :ref="$index"
               ></el-input>
-              <span
-                v-else
-                @click="toEdit(row, $index)"
-                style="display: block"
-                >{{ row.valueName }}</span
-              >
+              <span v-else @click="toEdit(row, $index)" style="display: block">{{ row.valueName }}</span>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="address"
-            width="250"
-            label="操作"
-            align="center"
-          >
+          <el-table-column prop="address" width="250" label="操作" align="center">
             <template slot-scope="{ row, $index }">
               <!-- 气泡确认框 -->
-              <el-popconfirm :ref="$index" :title="`确定删除${row.valueName}?`" @onConfirm="deleteAttrValue($index)">
-                <el-button
-                  type="danger"
-                  icon="el-icon-delete"
-                  size="mini"
-                  slot="reference"
-                ></el-button>
+              <el-popconfirm :title="`确定删除${row.valueName}?`" @onConfirm="deleteAttrValue($index)">
+                <el-button type="danger" icon="el-icon-delete" size="mini" slot="reference"></el-button>
               </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
-        <el-button type="primary">保存</el-button>
+        <el-button type="primary" @click="addOrUpdateAttr" :disabled="attrInfo.attrValueList.length<1">保存</el-button>
         <el-button @click="isShowTable = true">取消</el-button>
       </div>
     </el-card>
@@ -158,26 +103,35 @@ export default {
           // },
         ],
         categoryId: 0, //三级分类的id
-        categoryLevel: 3, //服务器也需要根据这个字段区分几级id
-      },
+        categoryLevel: 3 //服务器也需要根据这个字段区分几级id
+      }
     };
   },
   methods: {
-    //自定义事件的回调
+    //给子组件的自定义事件的回调
     getCategoryId({ categoryId, level }) {
-      switch (level) {
-        case 1:
-          this.category1Id = categoryId;
-          this.category2Id = "";
-          this.category3Id = "";
-          break;
-        case 2:
-          this.category2Id = categoryId;
-          this.category3Id = "";
-          break;
-        case 3:
-          this.category3Id = categoryId;
-          break;
+      if (level == 1) {
+        this.category1Id = categoryId;
+        this.category2Id = "";
+        this.category3Id = "";
+      } else if (level == 2) {
+        this.category2Id = categoryId;
+        this.category3Id = "";
+      } else {
+        this.category3Id = categoryId;
+        this.getAttrList();
+      }
+    },
+    //获取平台属性的数据，当用户确定三级分类的时候，可以向服务器发请求获取平台属性进行展示
+    async getAttrList() {
+      const { category1Id, category2Id, category3Id } = this;
+      let result = await this.$API.attr.reqAttrList(
+        category1Id,
+        category2Id,
+        category3Id
+      );
+      if (result.code == 200) {
+        this.attrList = result.data;
       }
     },
     //点击添加属性按钮的回调
@@ -187,13 +141,13 @@ export default {
         attrName: "", //属性名
         attrValueList: [],
         categoryId: this.category3Id,
-        categoryLevel: 3,
+        categoryLevel: 3
       };
     },
     //点击编辑属性按钮的回调
     updateAttr(row) {
       //添加响应式属性
-      row.attrValueList.forEach((item) => this.$set(item, "flag", false));
+      row.attrValueList.forEach(item => this.$set(item, "flag", false));
       this.isShowTable = false;
       //this.attrInfo = {...row}  //错误,因为扩展运算符只是第一次进行浅拷贝(毫不相干),后面的都是深拷贝(藕断丝连)
       this.attrInfo = cloneDeep(row);
@@ -206,7 +160,7 @@ export default {
       this.attrInfo.attrValueList.push({
         attrId: this.attrInfo.id,
         valueName: "",
-        flag: true,
+        flag: true
       });
       //input框自动聚焦
       this.$nextTick(() => {
@@ -220,7 +174,7 @@ export default {
         return;
       }
       //新增属性值不能和以前的重复
-      let isRepeat = this.attrInfo.attrValueList.some((item) => {
+      let isRepeat = this.attrInfo.attrValueList.some(item => {
         if (row !== item) {
           return row.valueName == item.valueName;
         }
@@ -238,27 +192,25 @@ export default {
       });
     },
     //气泡确认框的确定按钮回调
-    deleteAttrValue(index){
+    deleteAttrValue(index) {
       //alert(1111)
-      this.attrInfo.attrValueList.splice(index, 1)
-    }
-  },
-  //category3Id有了之后就发请求
-  watch: {
-    async category3Id(newV, oldV) {
-      if (newV !== "") {
-        const { category1Id, category2Id } = this;
-        let result = await this.$API.attr.reqAttrList(
-          category1Id,
-          category2Id,
-          newV
-        );
-        if (result.code == 200) {
-          this.attrList = result.data;
-        }
-      }
+      this.attrInfo.attrValueList.splice(index, 1);
     },
-  },
+    //保存按钮，进行添加属性或修改属性的操作
+    async addOrUpdateAttr() {
+      //提交给服务器的数据中不应该包含flag字段
+      this.attrInfo.attrValueList = this.attrInfo.attrValueList.filter(item => {
+        delete item.flag;
+        return true;
+      });
+      try {
+        await this.$API.attr.reqAddOrUpdateAttr(this.attrInfo);
+        this.isShowTable = true;
+        this.$message({ type: "success", message: "保存成功" });
+        this.getAttrList()
+      } catch (error) {}
+    }
+  }
 };
 </script>
 

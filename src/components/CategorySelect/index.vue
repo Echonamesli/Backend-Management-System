@@ -2,7 +2,7 @@
   <div>
     <el-form :inline="true" :model="cForm" class="demo-form-inline">
       <el-form-item label="一级分类">
-        <el-select v-model="cForm.category1Id" placeholder="请选择" @change="handler1">
+        <el-select v-model="cForm.category1Id" placeholder="请选择" @change="handler1" :disabled="show">
           <el-option
             v-for="(c1, index) in category1List"
             :key="c1.id"
@@ -12,7 +12,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="二级分类">
-        <el-select v-model="cForm.category2Id" placeholder="请选择" @change="handler2">
+        <el-select v-model="cForm.category2Id" placeholder="请选择" @change="handler2" :disabled="show">
           <el-option
             v-for="(c2, index) in category2List"
             :key="c2.id"
@@ -22,7 +22,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="三级分类">
-        <el-select v-model="cForm.category3Id" placeholder="请选择" @change="handler3">
+        <el-select v-model="cForm.category3Id" placeholder="请选择" @change="handler3" :disabled="show">
           <el-option
             v-for="(c3, index) in category3List"
             :key="c3.id"
@@ -38,7 +38,7 @@
 <script>
 export default {
   name: "CategorySelect",
-
+  props:['show'],
   data() {
     return {
       cForm: {

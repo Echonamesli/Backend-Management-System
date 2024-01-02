@@ -18,7 +18,9 @@ import api from '@/api'
 
 //注册全局组件
 import CategorySelect from '@/components/CategorySelect'
+import HintButton from '@/components/HintButton'
 Vue.component(CategorySelect.name, CategorySelect)
+Vue.component(HintButton.name, HintButton)
 
 /**
  * If you don't want to use mock-server
