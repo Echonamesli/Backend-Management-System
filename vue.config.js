@@ -1,6 +1,7 @@
 'use strict'
 const path = require('path')
 const defaultSettings = require('./src/settings.js')
+const CompressionPlugin = require("compression-webpack-plugin");
 
 function resolve(dir) {
   return path.join(__dirname, dir)
@@ -47,6 +48,8 @@ module.exports = {
         pathRewrite: { '^/product': '' }
       }
     },
+    //开启mock数据, 这个mock 服务器可能会拦截请求并返回预定义的模拟数据，而不是请求真实的后端接口。
+    after: require('./mock/mock-server.js')
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
@@ -127,7 +130,18 @@ module.exports = {
             })
           // https:// webpack.js.org/configuration/optimization/#optimizationruntimechunk
           config.optimization.runtimeChunk('single')
+          //开启静态压缩
+          config.plugin("CompressionPlugin").use('compression-webpack-plugin', [{
+            filename: '[path][base].gz',
+            algorithm: 'gzip',
+            // 要压缩的文件（正则）
+            test: /\.js$|\.css$|\.html$|\.ttf$|\.eot$|\.woff$/,
+            // 最小文件开启压缩
+            threshold: 10240,
+            minRatio: 0.8
+          }])
+
         }
       )
-  }
+  },
 }

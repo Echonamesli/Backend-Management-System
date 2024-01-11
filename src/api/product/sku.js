@@ -14,3 +14,15 @@ export const reqAddSku = (skuInfo) => request({url: '/product/saveSkuInfo', meth
 
 //添加SKU
 export const reqSkuList = (spuId) => request({url: `/product/findBySpuId/${spuId}`, method:'get'})
+
+//sku界面获取list
+export const getSkuList = (page,limit) => request({url: `/product/list/${page}/${limit}`, method:'get'})
+
+//上架
+export const reqSale = (spuId) => request({url: `/product/onSale/${spuId}`, method:'get'})
+
+//下架
+export const reqCancel = (spuId) => request({url: `/product/cancelSale/${spuId}`, method:'get'})
+
+//获取sku详情
+export const reqSkuById = (spuId) => request({url: `/product/getSkuById/${spuId}`, method:'get'})

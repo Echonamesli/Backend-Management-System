@@ -31,7 +31,10 @@ export default {
       'sidebar'
     ]),
     routes() {
-      return this.$router.options.routes
+      //这个是初始定义的路由，是不会自动响应式变化的
+      //return this.$router.options.routes
+      //应该改成仓库计算完毕的最终路由
+      return this.$store.state.user.resultAllRoutes
     },
     activeMenu() {
       const route = this.$route

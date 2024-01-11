@@ -34,16 +34,26 @@
                 title="修改spu"
                 @click="updateSpu(row)"
               ></hint-button>
-              <hint-button type="info" icon="el-icon-info" size="mini" title="查看当前spu全部sku列表"  @click="seeSkuList(row)"></hint-button>
-              <el-dialog :title="`${spu.spuName}的sku列表`" :visible.sync="dialogTableVisible">
-                <el-table :data="skuList" :border="false" style="width:100%">
-                  <el-table-column property="skuName" label="名称" ></el-table-column>
-                  <el-table-column property="price" label="价格" ></el-table-column>
-                  <el-table-column property="weight" label="重量" ></el-table-column>
-                  <el-table-column  label="默认图片">
+              <hint-button
+                type="info"
+                icon="el-icon-info"
+                size="mini"
+                title="查看当前spu全部sku列表"
+                @click="seeSkuList(row)"
+              ></hint-button>
+              <el-dialog
+                :title="`${spu.spuName}的sku列表`"
+                :visible.sync="dialogTableVisible"
+                :before-close="beforeClose"
+              >
+                <el-table :data="skuList" :border="false" style="width:100%" v-loading="loading">
+                  <el-table-column property="skuName" label="名称"></el-table-column>
+                  <el-table-column property="price" label="价格"></el-table-column>
+                  <el-table-column property="weight" label="重量"></el-table-column>
+                  <el-table-column label="默认图片">
                     <template slot-scope="{row, $index}">
-                      <img :src="row.skuDefaultImg" style="width:100px;height:100px">
-                      </template>
+                      <img :src="row.skuDefaultImg" style="width:100px;height:100px" />
+                    </template>
                   </el-table-column>
                 </el-table>
               </el-dialog>
@@ -102,8 +112,9 @@ export default {
       total: 0,
       scene: 0, //负责场景切换，0——展示SPU列表数据， 1——添加/修改SPU， 2——添加SKU
       dialogTableVisible: false,
-      spu: [],  //当前选中的spu
-      skuList: []  //当前选中的spu的sku列表
+      spu: [], //当前选中的spu
+      skuList: [], //当前选中的spu的sku列表
+      loading: true
     };
   },
   components: {
@@ -183,13 +194,20 @@ export default {
       this.$refs.sku.initData(this.category1Id, this.category2Id, row);
     },
     //点击查看sku列表按钮的回调
-    async seeSkuList(row){
-      this.spu = row
-      let result = await this.$API.sku.reqSkuList(row.id)
-      if(result.code == 200){
-        this.skuList = result.data
+    async seeSkuList(row) {
+      this.dialogTableVisible = true;
+      this.spu = row;
+      let result = await this.$API.sku.reqSkuList(row.id);
+      if (result.code == 200) {
+        this.skuList = result.data;
+        this.loading = false;
       }
-      this.dialogTableVisible = true
+    },
+    //关闭对话框的回调
+    beforeClose(done) {
+      this.loading = true;
+      this.skuList = [];
+      done();
     }
   }
 };
