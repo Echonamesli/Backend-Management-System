@@ -42,7 +42,6 @@ Vue.use(ElementUI, { locale })
 
 Vue.config.productionTip = false
 Vue.prototype.$API = api
-
 new Vue({
   el: '#app',
   router,

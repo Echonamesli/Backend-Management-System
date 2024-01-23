@@ -75,7 +75,7 @@
 ## mock: mock文件夹下的data.json+home.js + utils文件夹下的mockRequest.js
 ### 自己mock了退出登录的接口
     
-    //这个是接口是在mock（mock-server文件里定义了基础路径是process.env.VUE_APP_MOCK_API）下的user写的模拟接口。
+    //这个接口是在mock（mock-server文件里定义了基础路径是process.env.VUE_APP_MOCK_API）下的user写的模拟接口。
     //所以要用mockRequest发起请求(baseURL: process.env.VUE_APP_MOCK_API也就是mock-api)
     export function logout() {
     return mockRequest({

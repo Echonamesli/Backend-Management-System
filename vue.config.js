@@ -30,13 +30,17 @@ module.exports = {
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
-  devServer: {
+  //devServer——在开发环境中，用于自动编译并自动刷新页面，方便开发过程中的调试
+  //这样每次写完原代码就不用手动输入指令npx webpack重新打包后才能重新编译代码
+  //注：该功能只会在内存中编译打包，不会有任何文件输出，如需更新到生产环境中，还需重新打包代码
+  devServer: {   // 开发服务器
     port: port,
-    open: true,
+    open: true,  // 是否自动打开浏览器
     overlay: {
       warnings: false,
       errors: true
     },
+    hot: true,   //模块热替换, 加快开发速度
     //配置代理跨域
     proxy: {
       '/acl': {
@@ -74,6 +78,7 @@ module.exports = {
     ])
 
     // when there are many pages, it will cause too many meaningless requests
+    //关闭webpack4的预提取：它能在浏览器空闲的时候，去加载我们指定的资源。它只会加载资源，并不执行
     config.plugins.delete('prefetch')
 
     // set svg-sprite-loader
@@ -122,9 +127,9 @@ module.exports = {
                 commons: {
                   name: 'chunk-commons',
                   test: resolve('src/components'), // can customize your rules
-                  minChunks: 3, //  minimum common number
+                  minChunks: 3, // 拆分前必须共享模块的最小 chunks 数
                   priority: 5,
-                  reuseExistingChunk: true
+                  reuseExistingChunk: true //如果当前 chunk 包含已从主 bundle 中拆分出的模块，则它将被重用，而不是生成新的模块
                 }
               }
             })
